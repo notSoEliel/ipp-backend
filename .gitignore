@@ -1,0 +1,71 @@
+# .gitignore para un proyecto combinado de FastAPI y Flutter en macOS
+
+# ### Backend - Python y FastAPI ###
+
+# Entorno virtual
+# Ignora la carpeta del entorno virtual para no subir todas las librerías.
+venv/
+/venv/
+*.venv
+.venv
+
+# Archivos de caché de Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Base de datos
+# Ignora el archivo de la base de datos de SQLite para no subir datos de prueba o producción.
+*.db
+*.sqlite
+*.sqlite3
+church_app.db
+
+# Archivos de configuración y secretos
+# ¡MUY IMPORTANTE! Ignora el archivo de credenciales de Firebase.
+firebase-credentials.json
+*.env
+.env
+
+# Archivos de dependencias (opcional, pero buena práctica si se usa requirements.txt)
+# pip-wheel-metadata/
+
+# --- Frontend - Flutter / FlutterFlow ---
+
+# Archivos generados por Flutter y el IDE
+.metadata
+.packages
+build/
+.dart_tool/
+pubspec.lock
+
+# Archivos de configuración de IDEs
+.idea/
+*.iml
+
+# Registros de Flutter
+app_usage.json
+error_log.txt
+
+# Archivos de prueba
+coverage/
+
+# --- macOS ---
+
+# Archivos del sistema operativo
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Archivos de caché de miniaturas
+._*
+
+# Archivos temporales
+*.swp
+*~
+.Trash
+.Trash-*
+
+# --- Archivos de configuración de Visual Studio Code ---
+.vscode/
+
