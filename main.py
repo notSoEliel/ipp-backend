@@ -122,9 +122,74 @@ def get_all_sermons(
     return sermons
 
 
-# ... (Admin endpoints for sermons remain the same) ...
+@app.post(
+    "/sermons",
+    response_model=schemas.Sermon,
+    status_code=status.HTTP_201_CREATED,
+    tags=["Admin: Sermons"],
+    summary="[Admin] Crear un Nuevo Sermón",
+    description="Crea un nuevo registro de sermón en la base de datos. Requiere permisos de administrador.",
+)
+def create_sermon(
+    sermon: schemas.SermonCreate,
+    db: Session = Depends(get_db),
+    admin_user: models.User = Depends(get_current_admin_user),
+):
+    return crud.create_sermon(db=db, sermon=sermon)
+
+
+@app.put(
+    "/sermons/{sermon_id}",
+    response_model=schemas.Sermon,
+    tags=["Admin: Sermons"],
+    summary="[Admin] Actualizar un Sermón",
+    description="Actualiza los datos de un sermón existente por su ID. Requiere permisos de administrador.",
+)
+def update_sermon(
+    sermon_id: int,
+    sermon_update: schemas.SermonUpdate,
+    db: Session = Depends(get_db),
+    admin_user: models.User = Depends(get_current_admin_user),
+):
+    db_sermon = crud.update_sermon(db, sermon_id, sermon_update)
+    if db_sermon is None:
+        raise HTTPException(status_code=404, detail="Sermon not found")
+    return db_sermon
+
+
+@app.delete(
+    "/sermons/{sermon_id}",
+    response_model=schemas.Sermon,
+    tags=["Admin: Sermons"],
+    summary="[Admin] Eliminar un Sermón",
+    description="Elimina un sermón de la base de datos por su ID. Requiere permisos de administrador.",
+)
+def delete_sermon(
+    sermon_id: int,
+    db: Session = Depends(get_db),
+    admin_user: models.User = Depends(get_current_admin_user),
+):
+    db_sermon = crud.delete_sermon(db, sermon_id)
+    if db_sermon is None:
+        raise HTTPException(status_code=404, detail="Sermon not found")
+    return db_sermon
+
 
 # --- Event Endpoints ---
+
+
+@app.get(
+    "/events/all",
+    response_model=List[schemas.Event],
+    tags=["Events"],
+    summary="Obtener TODOS los Eventos",
+    description="Devuelve una lista de todos los eventos (pasados y futuros). Ideal para poblar el widget de calendario.",
+)
+def get_all_events(
+    db: Session = Depends(get_db), current_user: models.User = Depends(get_current_user)
+):
+    events = crud.get_all_events(db)
+    return events
 
 
 @app.get(
@@ -161,4 +226,54 @@ def get_past_events(
     return events
 
 
-# ... (Admin endpoints for events remain the same) ...
+@app.post(
+    "/events",
+    response_model=schemas.Event,
+    status_code=status.HTTP_201_CREATED,
+    tags=["Admin: Events"],
+    summary="[Admin] Crear un Nuevo Evento",
+    description="Crea un nuevo evento en la base de datos. Requiere permisos de administrador.",
+)
+def create_event(
+    event: schemas.EventCreate,
+    db: Session = Depends(get_db),
+    admin_user: models.User = Depends(get_current_admin_user),
+):
+    return crud.create_event(db=db, event=event)
+
+
+@app.put(
+    "/events/{event_id}",
+    response_model=schemas.Event,
+    tags=["Admin: Events"],
+    summary="[Admin] Actualizar un Evento",
+    description="Actualiza los datos de un evento existente por su ID. Requiere permisos de administrador.",
+)
+def update_event(
+    event_id: int,
+    event_update: schemas.EventUpdate,
+    db: Session = Depends(get_db),
+    admin_user: models.User = Depends(get_current_admin_user),
+):
+    db_event = crud.update_event(db, event_id, event_update)
+    if db_event is None:
+        raise HTTPException(status_code=404, detail="Event not found")
+    return db_event
+
+
+@app.delete(
+    "/events/{event_id}",
+    response_model=schemas.Event,
+    tags=["Admin: Events"],
+    summary="[Admin] Eliminar un Evento",
+    description="Elimina un evento de la base de datos por su ID. Requiere permisos de administrador.",
+)
+def delete_event(
+    event_id: int,
+    db: Session = Depends(get_db),
+    admin_user: models.User = Depends(get_current_admin_user),
+):
+    db_event = crud.delete_event(db, event_id)
+    if db_event is None:
+        raise HTTPException(status_code=404, detail="Event not found")
+    return db_event

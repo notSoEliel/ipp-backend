@@ -82,6 +82,11 @@ def get_event_by_id(db: Session, event_id: int):
     return db.query(models.Event).filter(models.Event.id == event_id).first()
 
 
+def get_all_events(db: Session):
+    """Gets all events, past and future."""
+    return db.query(models.Event).order_by(models.Event.event_datetime.asc()).all()
+
+
 def get_upcoming_events(db: Session, skip: int = 0, limit: int = 100):
     """Gets events from today onwards."""
     now = datetime.now()
