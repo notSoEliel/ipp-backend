@@ -4,11 +4,15 @@
 from sqlalchemy.orm import Session
 import models
 import schemas
-from datetime import date, datetime
+from datetime import datetime
+
 
 # --- User CRUD ---
 def get_user_by_firebase_uid(db: Session, firebase_uid: str):
-    return db.query(models.User).filter(models.User.firebase_uid == firebase_uid).first()
+    return (
+        db.query(models.User).filter(models.User.firebase_uid == firebase_uid).first()
+    )
+
 
 def create_user(db: Session, user: schemas.UserCreate):
     # Set the first user as admin for testing purposes
@@ -17,22 +21,32 @@ def create_user(db: Session, user: schemas.UserCreate):
         firebase_uid=user.firebase_uid,
         email=user.email,
         full_name=user.full_name,
-        is_admin=is_first_user
+        is_admin=is_first_user,
     )
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
     return db_user
 
+
 # --- Sermon CRUD ---
 def get_sermon_by_id(db: Session, sermon_id: int):
     return db.query(models.Sermon).filter(models.Sermon.id == sermon_id).first()
 
+
 def get_latest_sermon(db: Session):
     return db.query(models.Sermon).order_by(models.Sermon.sermon_date.desc()).first()
 
+
 def get_sermons(db: Session, skip: int = 0, limit: int = 100):
-    return db.query(models.Sermon).order_by(models.Sermon.sermon_date.desc()).offset(skip).limit(limit).all()
+    return (
+        db.query(models.Sermon)
+        .order_by(models.Sermon.sermon_date.desc())
+        .offset(skip)
+        .limit(limit)
+        .all()
+    )
+
 
 def create_sermon(db: Session, sermon: schemas.SermonCreate):
     db_sermon = models.Sermon(**sermon.model_dump())
@@ -40,6 +54,7 @@ def create_sermon(db: Session, sermon: schemas.SermonCreate):
     db.commit()
     db.refresh(db_sermon)
     return db_sermon
+
 
 def update_sermon(db: Session, sermon_id: int, sermon_update: schemas.SermonUpdate):
     db_sermon = get_sermon_by_id(db, sermon_id)
@@ -52,6 +67,7 @@ def update_sermon(db: Session, sermon_id: int, sermon_update: schemas.SermonUpda
     db.refresh(db_sermon)
     return db_sermon
 
+
 def delete_sermon(db: Session, sermon_id: int):
     db_sermon = get_sermon_by_id(db, sermon_id)
     if not db_sermon:
@@ -60,13 +76,37 @@ def delete_sermon(db: Session, sermon_id: int):
     db.commit()
     return db_sermon
 
+
 # --- Event CRUD ---
 def get_event_by_id(db: Session, event_id: int):
     return db.query(models.Event).filter(models.Event.id == event_id).first()
 
-def get_events(db: Session, skip: int = 0, limit: int = 100):
-    today = date.today()
-    return db.query(models.Event).filter(models.Event.event_datetime >= datetime.combine(today, datetime.min.time())).order_by(models.Event.event_datetime.asc()).offset(skip).limit(limit).all()
+
+def get_upcoming_events(db: Session, skip: int = 0, limit: int = 100):
+    """Gets events from today onwards."""
+    now = datetime.now()
+    return (
+        db.query(models.Event)
+        .filter(models.Event.event_datetime >= now)
+        .order_by(models.Event.event_datetime.asc())
+        .offset(skip)
+        .limit(limit)
+        .all()
+    )
+
+
+def get_past_events(db: Session, skip: int = 0, limit: int = 100):
+    """Gets events from before today."""
+    now = datetime.now()
+    return (
+        db.query(models.Event)
+        .filter(models.Event.event_datetime < now)
+        .order_by(models.Event.event_datetime.desc())
+        .offset(skip)
+        .limit(limit)
+        .all()
+    )
+
 
 def create_event(db: Session, event: schemas.EventCreate):
     db_event = models.Event(**event.model_dump())
@@ -74,6 +114,7 @@ def create_event(db: Session, event: schemas.EventCreate):
     db.commit()
     db.refresh(db_event)
     return db_event
+
 
 def update_event(db: Session, event_id: int, event_update: schemas.EventUpdate):
     db_event = get_event_by_id(db, event_id)
@@ -85,6 +126,7 @@ def update_event(db: Session, event_id: int, event_update: schemas.EventUpdate):
     db.commit()
     db.refresh(db_event)
     return db_event
+
 
 def delete_event(db: Session, event_id: int):
     db_event = get_event_by_id(db, event_id)
