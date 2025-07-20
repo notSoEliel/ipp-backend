@@ -48,7 +48,7 @@ def init_db():
                     pastor="Pr. Paulo Oliveira",
                     bible_verse="Mateo 6:24",
                     sermon_date=date.fromisoformat("2025-07-13"),
-                    image_url="https://placehold.co/600x400?text=Serm%C3%B3n+1&font=roboto",
+                    image_url="https://placehold.co/600x400.png?text=Serm%C3%B3n+1&font=roboto",
                     video_url="https://www.youtube.com/watch?v=dQw4w9WgXcQ",  # El Rickroll :)
                 ),
                 models.Sermon(
@@ -56,7 +56,7 @@ def init_db():
                     pastor="Pr. Paulo Oliveira",
                     bible_verse="1 Juan 4:8",
                     sermon_date=date.fromisoformat("2025-07-06"),
-                    image_url="https://placehold.co/600x400?text=Serm%C3%B3n+2&font=roboto",
+                    image_url="https://placehold.co/600x400.png?text=Serm%C3%B3n+2&font=roboto",
                     video_url="https://www.youtube.com/watch?v=dQw4w9WgXcQ",
                 ),
                 models.Sermon(
@@ -64,7 +64,7 @@ def init_db():
                     pastor="Pr. Invitado",
                     bible_verse="Hebreos 11:1",
                     sermon_date=date.fromisoformat("2025-06-29"),
-                    image_url="https://placehold.co/600x400?text=Serm%C3%B3n+3&font=roboto",
+                    image_url="https://placehold.co/600x400.png?text=Serm%C3%B3n+3&font=roboto",
                     video_url="https://www.youtube.com/watch?v=dQw4w9WgXcQ",
                 ),
             ]
